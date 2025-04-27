@@ -1,0 +1,75 @@
+# version: '3.9'
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql-cart
+    platform: linux/amd64
+    environment:
+      MYSQL_ROOT_PASSWORD: Mukesh
+      MYSQL_DATABASE: ecommerce_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    restart: always
+
+  cart-api:
+    image: testdevs/cartapi:latest
+    container_name: cart-api
+    platform: linux/amd64
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-cart:3306/ecommerce_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Mukesh
+    expose:
+      - "8081"
+    restart: always
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-cartapi
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - cart-api
+    restart: always
+
+volumes:
+  mysql-data:
+
+
+
+
+
+
+# version: '3.8'
+
+# services:
+#   mysql:
+#     image: mysql:8
+#     container_name: mysql-cart
+#     environment:
+#       MYSQL_ROOT_PASSWORD: Mukesh
+#       MYSQL_DATABASE: ecommerce_db
+#     ports:
+#       - "3307:3306"
+#     volumes:
+#       - mysql-data:/var/lib/mysql
+
+#   cart-api:
+#     build: .
+#     container_name: cart-api
+#     ports:
+#       - "8080:8080"
+#     depends_on:
+#       - mysql
+#     environment:
+#       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-cart:3306/ecommerce_db
+#       SPRING_DATASOURCE_USERNAME: root
+#       SPRING_DATASOURCE_PASSWORD: Mukesh
+
+# volumes:
+#   mysql-data:
